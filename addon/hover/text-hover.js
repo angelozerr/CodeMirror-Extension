@@ -114,6 +114,7 @@
   function onMouseOver(cm, e) {
     var node = e.target || e.srcElement;
     if (node) {
+      if (/\bCodeMirror-lint-mark-/.test(node.className)) return; // hack if lint addon is used to give it a higher priority
       var state = cm.state.textHover, data = getTokenAndPosAt(cm, e);
       var content = state.options.getTextHover(cm, data, e);
       if (content) {
