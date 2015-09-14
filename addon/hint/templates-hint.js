@@ -221,7 +221,7 @@
       cm.refresh();            
       if (templateHint) {
 	    // Open completion with completion list items
-        cm.showHint({hint: templateHint});
+        cm.showHint({hint: templateHint, somethingSelected: false});
       }
     } else {
       // No tokens - exit.
