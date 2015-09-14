@@ -1,7 +1,7 @@
 {
   "name": "codemirror-extension",
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Angelo ZERR <angelo.zerr@gmail.com>",
   "description": "CodeMirror Extension",
   "repository": {
