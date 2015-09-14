@@ -291,15 +291,7 @@
         inclusiveRight : true,
         clearWhenEmpty: false,  // Works in CodeMirror 4.6
         _templateVar : marker.variable,
-        _templateHint : marker.list ? function hint(cm, c) {
-          var completions = [], to = cm.getCursor("end"), word = cm.somethingSelected() ? "" : cm.getTokenAt(to).string;          
-          for (var i = 0; i < marker.list.length; i++) {
-            var name = marker.list[i]; 
-            if (name.toLowerCase().indexOf(word.toLowerCase()) == 0) completions.push(name);            
-          }
-          var obj = {from: from, to: to, list: completions};
-          c(obj);
-        } : null
+        _templateHint : marker.list ? getHints(marker.list, from) : null
       });
       state.marked.push(markText);
       if (marker.selectable == true) {
@@ -330,6 +322,18 @@
     selectNextVariable(cm, true);
   }
 
+  function getHints(list, from) {
+    return function(cm, c) {    
+      var completions = [], to = cm.getCursor("end"), word = cm.somethingSelected() ? "" : cm.getTokenAt(to).string;          
+      for (var j = 0; j < list.length; j++) {
+        var name = list[j]; 
+        if (name.toLowerCase().indexOf(word.toLowerCase()) == 0) completions.push(name);            
+      }
+      var obj = {from: from, to: to, list: completions};
+      c(obj);
+    }
+  }
+  
   function exit(cm) {
     // Move to ${cursor} in the template, then uninstall.
     var cursor = cm._templateState.cursor;
