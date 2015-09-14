@@ -221,6 +221,7 @@
       cm.refresh();            
       if (templateHint) {
 	    // Open completion with completion list items
+        templateHint.async = true;
         cm.showHint({hint: templateHint, somethingSelected: false});
       }
     } else {
@@ -290,7 +291,15 @@
         inclusiveRight : true,
         clearWhenEmpty: false,  // Works in CodeMirror 4.6
         _templateVar : marker.variable,
-        _templateHint : marker.list ? function hint(cm, c) {return {"list": marker.list, "from": marker.from, "to": marker.to}} : null
+        _templateHint : marker.list ? function hint(cm, c) {
+          var completions = [], to = cm.getCursor("end"), word = cm.somethingSelected() ? "" : cm.getTokenAt(to).string;          
+          for (var i = 0; i < marker.list.length; i++) {
+            var name = marker.list[i]; 
+            if (name.toLowerCase().indexOf(word.toLowerCase()) == 0) completions.push(name);            
+          }
+          var obj = {from: from, to: to, list: completions};
+          c(obj);
+        } : null
       });
       state.marked.push(markText);
       if (marker.selectable == true) {
