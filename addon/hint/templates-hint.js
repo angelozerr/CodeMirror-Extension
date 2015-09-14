@@ -198,13 +198,14 @@
       var marker = state.selectableMarkers[state.varIndex];
       var pos = marker.find();
       cm.setSelection(pos.from, pos.to);
-      var templateVar = marker._templateVar;
+      var templateVar = marker._templateVar, templateHint;
       for ( var i = 0; i < state.marked.length; i++) {
         var m = state.marked[i];
         if (m == marker) {
           m.className = "";
           m.startStyle = "";
           m.endStyle = "";
+          templateHint = m._templateHint;
         } else {
           if (m._templateVar == marker._templateVar) {
             m.className = "CodeMirror-templates-variable-selected";
@@ -217,7 +218,11 @@
           }
         }
       }
-      cm.refresh();
+      cm.refresh();            
+      if (templateHint) {
+	    // Open completion with completion list items
+        cm.showHint({hint: templateHint});
+      }
     } else {
       // No tokens - exit.
       exit(cm);
@@ -259,7 +264,8 @@
           from : from,
           to : to,
           variable : token.variable,
-          selectable : selectable
+          selectable : selectable,
+          list: token.list
         });
         variables[token.variable] = false;
       } else if(token.cursor) {
@@ -283,7 +289,8 @@
         inclusiveLeft : true,
         inclusiveRight : true,
         clearWhenEmpty: false,  // Works in CodeMirror 4.6
-        _templateVar : marker.variable
+        _templateVar : marker.variable,
+        _templateHint : marker.list ? function hint(cm, c) {return {"list": marker.list, "from": marker.from, "to": marker.to}} : null
       });
       state.marked.push(markText);
       if (marker.selectable == true) {
