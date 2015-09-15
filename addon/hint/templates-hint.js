@@ -182,6 +182,17 @@
     }
   }
 
+  var baseMap = {
+    Up: function(cm, handle) {handle.moveFocus(-1);},
+    Down: function(cm, handle) {handle.moveFocus(1);},
+    PageUp: function(cm, handle) {handle.moveFocus(-handle.menuSize() + 1, true);},
+    PageDown: function(cm, handle) {handle.moveFocus(handle.menuSize() - 1, true);},
+    Home: function(cm, handle) {handle.setFocus(0);},
+    End: function(cm, handle) {handle.setFocus(handle.length - 1);},
+    Enter: function(cm, handle) {handle.pick();},
+    Esc: function(cm, handle) {handle.close();}
+  };
+  
   function selectNextVariable(cm, exitOnEnd) {
     var state = cm._templateState;
     if (state.selectableMarkers.length > 0) {
@@ -222,7 +233,7 @@
       if (templateHint) {
 	    // Open completion with completion list items
         templateHint.async = true;
-        cm.showHint({hint: templateHint, somethingSelected: false});
+        cm.showHint({hint: templateHint, somethingSelected: false, customKeys : baseMap});
       }
     } else {
       // No tokens - exit.
@@ -290,9 +301,9 @@
         inclusiveLeft : true,
         inclusiveRight : true,
         clearWhenEmpty: false,  // Works in CodeMirror 4.6
-        _templateVar : marker.variable,
-        _templateHint : marker.list ? getHints(marker.list, from) : null
+        _templateVar : marker.variable
       });
+      if (marker.list && marker.list.length > 0) markText._templateHint = getHints(markText, marker.list);
       state.marked.push(markText);
       if (marker.selectable == true) {
         state.selectableMarkers.push(markText);
@@ -322,12 +333,14 @@
     selectNextVariable(cm, true);
   }
 
-  function getHints(list, from) {
-    return function(cm, c) {    
-      var completions = [], to = cm.getCursor("end"), word = cm.somethingSelected() ? "" : cm.getTokenAt(to).string;          
+  function getHints(markText, list) {
+    return function(cm, c) {
+      var pos = markText.find(), from = pos.from, to = pos.to;
+      var completions = [], word = cm.somethingSelected() ? "" : cm.getTokenAt(to).string;          
       for (var j = 0; j < list.length; j++) {
-        var name = list[j]; 
-        if (name.toLowerCase().indexOf(word.toLowerCase()) == 0) completions.push(name);            
+        var item = list[j], text = item;
+        if (!(typeof text == 'string')) text = item.text;
+        if (text && text.toLowerCase().indexOf(word.toLowerCase()) == 0) completions.push(item);            
       }
       var obj = {from: from, to: to, list: completions};
       c(obj);
