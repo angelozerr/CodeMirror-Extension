@@ -233,7 +233,8 @@
       if (templateHint) {
 	    // Open completion with completion list items
         templateHint.async = true;
-        cm.showHint({hint: templateHint, somethingSelected: false, customKeys : baseMap});
+        templateHint.supportsSelection = true;
+        cm.showHint({hint: templateHint, customKeys : baseMap});
       }
     } else {
       // No tokens - exit.
