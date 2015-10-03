@@ -11,6 +11,7 @@
 	z-index: 100;
 	max-width: 600px;
 	opacity: 0;
+	white-space: pre-wrap;
 	transition: opacity .4s;
 	-moz-transition: opacity .4s;
 	-webkit-transition: opacity .4s;
