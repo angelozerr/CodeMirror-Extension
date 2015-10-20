@@ -8,6 +8,9 @@
     "type": "git",
     "url": "git://github.com/angelozerr/codemirror-extension.git"
   },
+  "scripts": {
+    "publish": "node ./scripts/git-tag.js"    
+  },
   "dependencies": {
     "codemirror": "^5.8.0"
   },
