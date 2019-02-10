@@ -13,10 +13,14 @@
     document.body.appendChild(tt);
 
     function position(e) {
-      if (!tt.parentNode)
-        return CodeMirror.off(document, "mousemove", position);
-      tt.style.top = Math.max(0, e.clientY - tt.offsetHeight - 5) + "px";
-      tt.style.left = (e.clientX + 5) + "px";
+      var target_rect = e.target.getBoundingClientRect(),
+          tt_rect = tt.getBoundingClientRect();
+      if (tt_rect.height <= target_rect.top) {
+          tt.style.top = (target_rect.top - tt_rect.height) + "px";
+      } else {
+          tt.style.top = target_rect.bottom + "px";
+      }
+      tt.style.left = target_rect.left + "px";
     }
     CodeMirror.on(document, "mousemove", position);
     position(e);
